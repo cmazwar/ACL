@@ -4,16 +4,35 @@ defmodule Acl.MixProject do
   def project do
     [
       app: :acl,
-      version: "0.1.0",
+      version: "0.1.1",
       elixir: "~> 1.5",
+      maintainers: ["Azwar Habib"],
+      licenses: ["Apache 2.0"],
+      description: "Acl implementation.",
+      links: %{"GitHub" => "https://github.com/Azzy420/ACL_"},
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
+      description: description(),
+      package: package(),
       aliases: aliases(),
       deps: deps()
     ]
   end
+  defp description do
+    """
+    Acl implementation.
+    """
+  end
 
+  defp package do
+    [
+      files: ["lib", "mix.exs", "README.md"],
+      maintainers: ["Azwar Habib"],
+      licenses: ["Apache 2.0"],
+      links: %{"GitHub" => "https://github.com/Azzy420/ACL_"}
+    ]
+  end
   # Configuration for the OTP application.
   #
   # Type `mix help compile.app` for more information.
@@ -33,14 +52,18 @@ defmodule Acl.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.3.0"},
-      {:phoenix_pubsub, "~> 1.1"},
-      {:phoenix_ecto, "~> 4.0"},
       {:ecto_sql, "~> 3.0"},
-      {:postgrex, ">= 0.0.0"},
-      {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"}
+      {:plug_cowboy, "~> 1.0.0"},
+      {:ex_doc, ">= 0.0.0", only: :dev},
+      {:phoenix, "~> 1.3.0"},
+      {:phoenix_pubsub, "~> 1.0"},
+      {:phoenix_ecto, "~> 3.2"},
+      {:postgrex, ">= 0.0.0"},
+      {:phoenix_html, "~> 2.10"},
+      {:phoenix_live_reload, "~> 1.0", only: :dev},
+      {:gettext, "~> 0.11"},
+      {:cowboy, "~> 1.0"}
     ]
   end
 
@@ -59,18 +82,5 @@ defmodule Acl.MixProject do
   end
 
 
-  defp description do
-    """
-    Acl implementation.
-    """
-  end
 
-  defp package do
-    [
-      files: ["lib", "mix.exs", "README.md"],
-      maintainers: ["Azwar Habib"],
-      licenses: ["Apache 2.0"],
-      links: %{"GitHub" => "https://github.com/yosriady/simple_statistics"}
-    ]
-  end
 end

@@ -23,7 +23,7 @@ defmodule AclWeb.RuleController do
   end
 
   def show(conn, %{"role" => role, "res" => res, "permission" => permission, "action" => action }) do
-    rule = Acl_context.get_rule!(role, res, permission, action)
+    rule = Acl_context.get_rule!([role, res, permission, action])
     render(conn, "show.json", rule: rule)
   end
 
