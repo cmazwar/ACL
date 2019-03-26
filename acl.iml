@@ -93,5 +93,14 @@
     <orderEntry type="library" name="jazz" level="project" />
     <orderEntry type="library" name="phoenix_live_reload" level="project" />
     <orderEntry type="library" name="file_system" level="project" />
+    <orderEntry type="library" name="cmark" level="project" />
+    <orderEntry type="library" name="excoveralls" level="project" />
+    <orderEntry type="library" name="phoenix_guides" level="project" />
+    <orderEntry type="library" name="benchfella" level="project" />
+    <orderEntry type="library" name="jiffy" level="project" />
+    <orderEntry type="library" name="exjsx" level="project" />
+    <orderEntry type="library" name="json" level="project" />
+    <orderEntry type="library" name="jazz" level="project" />
+    <orderEntry type="library" name="stream_data" level="project" />
   </component>
 </module>

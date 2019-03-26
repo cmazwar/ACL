@@ -2,12 +2,12 @@ defmodule Acl.Acl_context.Res do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @primary_key {:res, :string, autogenerate: false}
+  @primary_key {:id, :integer, autogenerate: false}
   schema "acl_res" do
 
     field :parent, :string, default: NULL
-    #field :res, :string
-    has_many :rules, Acl.Acl_context.Rule
+    field :res, :string
+    has_many :rules, Acl.Acl_context.Rule, foreign_key: :res_id
     timestamps()
   end
 

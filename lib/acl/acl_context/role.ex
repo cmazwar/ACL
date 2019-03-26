@@ -7,8 +7,7 @@ defmodule Acl.Acl_context.Role do
   schema "acl_roles" do
     field :parent, :string
     #field :role, :string, primary_key: true
-    has_many :rules, Acl.Acl_context.Rule
-
+    has_many :rules, Acl.Acl_context.Rule, foreign_key: :role
     timestamps()
   end
 

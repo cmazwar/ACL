@@ -7,10 +7,24 @@ defmodule AclWeb.AclController do
   alias AclWeb.RoleController
 
 
-  def hasAccess?(conn, params) do
-
-    RuleController.checkRule(params)
+  def hasAccess(role, res \\nil, action \\nil, permission \\"read") do
+    RuleController.checkRule(role, res, action, permissionTranslate(permission))
   end
+  defp permissionTranslate (permission) do
+    case permission do
+      "POST" -> "write"
+      "GET" -> "read"
+      "PUT" -> "edit"
+      "DELETE" -> "delete"
+      "write" -> "write"
+      "read" -> "read"
+      "edit" -> "edit"
+      "delete" -> "delete"
+      _ -> nil
+    end
+
+  end
+
   def addRule(conn, params) do
 
     RuleController.addRule(params)

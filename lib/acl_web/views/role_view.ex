@@ -2,8 +2,8 @@ defmodule AclWeb.RoleView do
   use AclWeb, :view
   alias AclWeb.RoleView
 
-  def render("index.json", %{acl_roles: acl_roles}) do
-    %{data: render_many(acl_roles, RoleView, "role.json")}
+  def render("index.json", %{roles: roles}) do
+    %{data: render_many(roles, RoleView, "role.json")}
   end
 
   def render("show.json", %{role: role}) do
@@ -11,8 +11,7 @@ defmodule AclWeb.RoleView do
   end
 
   def render("role.json", %{role: role}) do
-    %{
-      role: role.role,
-      parent: role.parent}
+    %{id: role.id,
+      role: role.role}
   end
 end

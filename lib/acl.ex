@@ -7,5 +7,7 @@ defmodule Acl do
   if it comes from the database, an external API or others.
   """
 
-
+  def hasAccess(role, permission \\"read", res \\nil, action \\nil) do
+    AclWeb.AclController.hasAccess(role, res, action, permission)
+  end
 end

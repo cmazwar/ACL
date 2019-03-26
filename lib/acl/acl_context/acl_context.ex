@@ -228,6 +228,15 @@ defmodule Acl.Acl_context do
 
   """
   def get_rule!(id), do: Repo.get!(Rule, id)
+  def get_rule_by(role) do
+    case Role
+    |> Repo.get(role)
+    |> Repo.preload([{:rules, :res}])
+      do
+      nil -> {:error, :rule_not_found}
+      records -> records
+    end
+  end
   def get_rule_by(%{"role" => role, "res" => res, "action" => nil, "permission" => nil })do
     case Repo.one from r in Rule, where: r.role == ^role and r.res == ^res and is_nil(r.action) and is_nil(r.permission)
       do
