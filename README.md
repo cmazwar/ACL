@@ -5,7 +5,8 @@ This ACL is designed to be used in a phoneix project and handles all your permis
  It requires following depedencies
  
  '''
-      {:ecto_sql, "\~> 3.0"} \n
+      {:ecto_sql, "\~> 3.0"}
+      
       {:jason, "\~> 1.0"}
       {:plug_cowboy, "\~> 1.0.0"}
       {:ex_doc, ">= 0.0.0", only: :dev}
