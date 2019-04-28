@@ -1,7 +1,7 @@
 # Acl
 
 ACL or access control list is a list of permissions attached to a specific object for certain users.
-This ACL is designed to be used in a phoneix project and handles all your permissions managment.
+This ACL is designed to be used in a phoneix (Elixir) project and handles all your permissions managment.
  It requires following depedencies
  
  
