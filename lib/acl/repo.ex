@@ -1,4 +1,6 @@
 defmodule Acl.Repo do
+  @moduledoc false
+
   use Ecto.Repo,
       otp_app: :acl,
       adapter: Ecto.Adapters.Postgres

@@ -9,14 +9,23 @@ defmodule Acl.MixProject do
       maintainers: ["Azwar Habib"],
       licenses: ["Apache 2.0"],
       description: "Acl implementation.",
-      links: %{"GitHub" => "https://github.com/Azzy420/ACL_"},
+      links: %{"GitHub" => "https://github.com/Azzy420/ACL"},
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       description: description(),
       package: package(),
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+
+      # Docs
+      name: "ACL",
+      source_url: "https://github.com/Azzy420/ACL",
+      homepage_url: "https://github.com/Azzy420/ACL",
+      docs: [main: "Acl", # The main page in the docs
+        extras: ["README.md"],
+                api_reference: false,
+      ]
     ]
   end
   defp description do

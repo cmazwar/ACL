@@ -1,5 +1,6 @@
 defmodule AclWeb.Gettext do
-  @moduledoc """
+  @moduledoc false
+ """
   A module providing Internationalization with a gettext-based API.
 
   By using [Gettext](https://hexdocs.pm/gettext),

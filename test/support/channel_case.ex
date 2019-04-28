@@ -1,5 +1,6 @@
 defmodule AclWeb.ChannelCase do
-  @moduledoc """
+  @moduledoc false
+ """
   This module defines the test case to be used by
   channel tests.
 

@@ -1,4 +1,6 @@
 defmodule AclWeb.ErrorView do
+  @moduledoc false
+
   use AclWeb, :view
 
   def render("404.html", _assigns) do

@@ -1,5 +1,6 @@
 defmodule Acl.Acl_context do
-  @moduledoc """
+  @moduledoc false
+ """
   The Acl_context context.
   """
 

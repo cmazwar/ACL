@@ -1,4 +1,6 @@
 defmodule AclWeb.Router do
+  @moduledoc false
+
   use AclWeb, :router
 
   pipeline :api do

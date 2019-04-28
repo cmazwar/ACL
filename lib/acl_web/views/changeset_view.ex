@@ -1,4 +1,6 @@
 defmodule AclWeb.ChangesetView do
+  @moduledoc false
+
   use AclWeb, :view
 
   @doc """

@@ -96,7 +96,7 @@ like "edit" grants permissions for all operations. their heirarchy is in this or
 
 
 
-    read" < "write" < "delete" < "edit"
+    "read" < "write" < "delete" < "edit"
     "GET" < "POST" < "DELETE" < "PUT"
 
 

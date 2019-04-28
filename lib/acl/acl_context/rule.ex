@@ -1,4 +1,6 @@
 defmodule Acl.Acl_context.Rule do
+  @moduledoc false
+
   use Ecto.Schema
   import Ecto.Changeset
 

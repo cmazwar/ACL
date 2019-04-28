@@ -1,4 +1,6 @@
 defmodule AclWeb.Endpoint do
+  @moduledoc false
+
   use Phoenix.Endpoint, otp_app: :acl
 
   socket "/socket", AclWeb.UserSocket

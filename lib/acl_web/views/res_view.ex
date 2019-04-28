@@ -1,4 +1,6 @@
 defmodule AclWeb.ResView do
+  @moduledoc false
+
   use AclWeb, :view
   alias AclWeb.ResView
 

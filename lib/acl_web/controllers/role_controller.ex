@@ -1,4 +1,6 @@
 defmodule AclWeb.RoleController do
+  @moduledoc false
+
   use AclWeb, :controller
 
   alias Acl.Acl_context

@@ -1,4 +1,6 @@
 defmodule AclWeb.RuleView do
+  @moduledoc false
+
   use AclWeb, :view
   alias AclWeb.RuleView
 

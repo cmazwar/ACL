@@ -1,4 +1,6 @@
 defmodule AclWeb.RoleView do
+  @moduledoc false
+
   use AclWeb, :view
   alias AclWeb.RoleView
 

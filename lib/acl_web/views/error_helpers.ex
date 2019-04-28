@@ -1,5 +1,6 @@
 defmodule AclWeb.ErrorHelpers do
-  @moduledoc """
+  @moduledoc false
+ """
   Conveniences for translating and building error messages.
   """
 
