@@ -132,6 +132,7 @@ defmodule Acl.Acl_context do
 
   """
   def get_res!(id), do: Repo.get!(Res, id)
+  def get_res(res), do: Repo.get_by(Res, [res: res])
 
   @doc """
   Creates a res.
@@ -228,46 +229,76 @@ defmodule Acl.Acl_context do
 
   """
   def get_rule!(id), do: Repo.get!(Rule, id)
-  def get_rule_by(role) do
-    case Role
-    |> Repo.get(role)
-    |> Repo.preload([{:rules, :res}])
+
+
+
+
+
+  def get_rule_by(%{"role" => role, "res" => res, "action" => nil, "permission" => nil})do
+    case Repo.one from r in Rule,
+                  where: r.role == ^role and r.res_id == ^res and is_nil(r.action) and is_nil(r.permission),
+                  preload: [
+                    :res
+                  ]
       do
       nil -> {:error, :rule_not_found}
-      records -> records
-    end
-  end
-  def get_rule_by(%{"role" => role, "res" => res, "action" => nil, "permission" => nil })do
-    case Repo.one from r in Rule, where: r.role == ^role and r.res == ^res and is_nil(r.action) and is_nil(r.permission)
-      do
-      nil ->  nil
       rule -> rule
     end
   end
-  def get_rule_by(%{"role" => role, "res" => res, "action" => action , "permission" => nil})do
+  def get_rule_by(%{"role" => role, "res" => res, "action" => action, "permission" => nil})do
 
-    case Repo.one from r in Rule, where: r.role == ^role and r.res == ^res and r.action == ^action and is_nil(r.permission)
+    case Repo.one from r in Rule,
+                  where: r.role == ^role and r.res_id == ^res and r.action == ^action and is_nil(r.permission),
+                  preload: [:res]
       do
-      nil ->  nil
+      nil -> {:error, :rule_not_found}
       rule -> rule
     end
   end
-  def get_rule_by(%{"role" => role, "res" => res, "permission" => permission, "action" => action })do
-    case Repo.get_by(Rule,[ role: role, res: res, permission: permission, action: action]) do
-      nil ->  nil
-      rule -> rule
+  def get_rule_by(%{"role" => role, "res" => res, "permission" => permission, "action" => action})do
+    if  is_nil(action)
+      do
+      case Repo.one from r in Rule,
+                    where: r.role == ^role and r.res_id == ^res and is_nil(
+                      r.action
+                           ) and r.permission == ^permission,
+                    preload: [:res]
+        do
+        nil -> {:error, :rule_not_found}
+        rule -> rule
+      end
+    else
+      case Rule
+           |> Repo.get_by([role: role, res_id: res, permission: permission, action: action])
+        do
+        nil -> {:error, :rule_not_found}
+        rule -> rule
+      end
     end
+
   end
-  def get_rule_by(%{"role" => role, "res" => res,  "action" => action })do
-    case Repo.all(Rule,[ role: role, res: res,  action: action]) do
-      nil ->  nil
+  def get_rule_by(%{"role" => role, "res" => res, "action" => action})do
+    case Rule
+         |> Repo.all([role: role, res_id: res, action: action])
+         |> Repo.preload(:res)  do
+      nil -> {:error, :rule_not_found}
+      [] -> {:error, :rule_not_found}
       rule -> rule
     end
   end
   def get_rule_by(%{"role" => role, "res" => res})do
-    case Repo.all(Rule,[ role: role, res: res]) do
-      nil ->  nil
+    case Repo.all(Rule, [role: role, res_id: res]) do
+      nil -> {:error, :rule_not_found}
       rule -> rule
+    end
+  end
+  def get_rule_by(role) do
+    case Role
+         |> Repo.get(role)
+         |> Repo.preload([{:rules, :res}])
+      do
+      nil -> {:error, :rule_not_found}
+      records -> records
     end
   end
 
@@ -287,7 +318,7 @@ defmodule Acl.Acl_context do
   """
   def create_rule(attrs \\ %{}) do
     %Rule{}
-    |> Rule.changeset(attrs)
+    |> Rule.changeset(attrs, attrs["res"])
     |> Repo.insert()
   end
 
@@ -304,9 +335,13 @@ defmodule Acl.Acl_context do
 
   """
   def update_rule(%Rule{} = rule, attrs) do
-    rule
-    |> Rule.changeset(attrs)
-    |> Repo.update()
+    cs = rule
+         |> Rule.u_changeset(attrs)
+    if cs.changes != %{} do
+      cs
+      |> Repo.update()
+    end
+
   end
 
   @doc """
@@ -335,6 +370,6 @@ defmodule Acl.Acl_context do
 
   """
   def change_rule(%Rule{} = rule) do
-    Rule.changeset(rule, %{})
+    Rule.changeset(rule, %{}, %{})
   end
 end

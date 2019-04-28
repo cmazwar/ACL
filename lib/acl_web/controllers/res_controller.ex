@@ -11,13 +11,9 @@ defmodule AclWeb.ResController do
     render(conn, "index.json", acl_res: acl_res)
   end
 
-  def create(conn, %{"res" => res_params}) do
-    with {:ok, %Res{} = res} <- Acl_context.create_res(res_params) do
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", Routes.res_path(conn, :show, res))
-      |> render("show.json", res: res)
-    end
+  def create(res_params) do
+
+    Acl_context.create_res(res_params)
   end
 
   def show(conn, %{"id" => id}) do

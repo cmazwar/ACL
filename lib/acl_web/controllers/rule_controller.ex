@@ -8,7 +8,6 @@ defmodule AclWeb.RuleController do
   action_fallback AclWeb.FallbackController
 
   def index(conn, _params) do
-#    IO.inspect(_params)
     acl_rules = Acl_context.list_acl_rules()
     render(conn, "index.json", acl_rules: acl_rules)
   end
@@ -22,7 +21,7 @@ defmodule AclWeb.RuleController do
     end
   end
 
-  def show(conn, %{"role" => role, "res" => res, "permission" => permission, "action" => action }) do
+  def show(conn, %{"role" => role, "res" => res, "permission" => permission, "action" => action}) do
     rule = Acl_context.get_rule!([role, res, permission, action])
     render(conn, "show.json", rule: rule)
   end
@@ -53,44 +52,69 @@ defmodule AclWeb.RuleController do
   end
 
 
-  def checkRule(role , res, action, permission )do
+  def checkRule(role, res, action, permission)do
 
     case Acl_context.get_rule_by(role) do
       {:error, error} -> {:error, error}
-      records  -> iterateRules(res, action, permission, Map.from_struct( Acl_context.get_rule_by(role)).rules)
+      records -> iterateRules(res, action, permission, Map.from_struct(records).rules)
       _ -> {:error, :permission_denied}
     end
 
 
   end
-  def iterateRules(res, action, permission, [rule|rules]) do
-   #IO.inspect(rule)
-   cond do
-     rule.res.res == res and  rule.action == action and rule.permission >= permission(permission) -> formAclResponse(rule)
-     rule.res.res == res  and rule.permission >= permission(permission) -> formAclResponse(rule)
-     rule.res.res == nil  and rule.permission >= permission(permission) -> formAclResponse(rule)
-     true ->  iterateRules(res, action, permission, rules)
-   end
+  def iterateRules(res, action, permission, [rule | rules]) do
+    cond do
+      rule.res.res == res and rule.action == action and rule.permission >= permission(permission) ->
+        formAclResponse(rule)
+      rule.res.res == res and rule.permission >= permission(permission) ->
+        formAclResponse(rule)
+      rule.res.res == nil and rule.permission >= permission(permission) ->
+        formAclResponse(rule)
+      true ->
+        iterateRules(res, action, permission, rules)
+    end
 
   end
   def iterateRules(res, action, permission, []), do: {:error, :permission_denied}
   def formAclResponse(rule) do
     if rule.where_cond == nil or rule.where_field == nil or rule.where_value == nil do
-      {:ok, %{"condition" => condition(rule.condition),"permission" => permission(rule.permission), "role" => rule.role, "res" => rule.res.res,  "$where" => %{}}}
-      else
-       whereclause= %{rule.where_field => %{ rule.where_cond => rule.where_value}}
-       {:ok, %{"condition" => condition(rule.condition),"permission" => permission(rule.permission), "role" => rule.role, "res" => rule.res.res,  "$where" => whereclause }}
+      {
+        :ok,
+        %{
+          "condition" => condition(rule.condition),
+          "permission" => permission(rule.permission),
+          "role" => rule.role,
+          "res" => rule.res.res,
+          "$where" => %{}
+        }
+      }
+    else
+      whereclause = %{
+        rule.where_field => %{
+          rule.where_cond => rule.where_value
+        }
+      }
+      {
+        :ok,
+        %{
+          "condition" => condition(rule.condition),
+          "permission" => permission(rule.permission),
+          "role" => rule.role,
+          "res" => rule.res.res,
+          "$where" => whereclause
+        }
+      }
     end
   end
 
 
   def permission (param) do
     case param do
-      0 -> "none"
-      1 -> "read"
-      2 -> "write"
-      3 -> "delete"
-      4 -> "edit"
+      0 -> 0
+      1 -> 1
+      2 -> 2
+      3 -> 3
+      4 -> 4
       "read" -> 1
       "write" -> 2
       "delete" -> 3
@@ -110,53 +134,71 @@ defmodule AclWeb.RuleController do
   end
 
 
+  def addRule(role, res_, permission \\ 1, action \\ nil, condition \\ 1)do
 
+    case Acl_context.get_res(res_) do
+      res ->
 
+        rule_= Acl_context.get_rule_by(
+          %{"role" => role, "res" => res.id,  "action" => action}
+        );
+        case rule_
+          do
+          {:error, :rule_not_found} ->
+            Acl_context.create_rule(
+              %{"role" => role, "res" => res, "permission" => permission(permission), "action" => action, "condition" => condition}
+            )
+          {:error, _} ->
+            {:error, :error_occured}
+          [rule|_] ->
+            Acl_context.update_rule(
+              rule,
+              %{
+                "role" => role,
+                "res" => res,
+                "permission" => permission(permission),
+                "action" => action,
+                "condition" => condition
+              }
+            )
+        end
+      nil -> {:error, :res_unknown}
 
-
-
-
-
-
-  def addRule( %{"role" => role, "res" => res, "permission" => permission, "action" => action, "allowed" => allowed, "condition" => condition  })do
-    rule=Acl_context.get_rule_by( %{"role" => role, "res" => res, "permission" => permission, "action" => action });
-  IO.inspect(rule);
-    case rule
-      do
-    nil ->  Acl_context.create_rule(%{"role" => role, "res" => res, "permission" => permission, "action" => action, "allowed" => allowed, "condition" => condition  })
-
-     _ -> Acl_context.update_rule(rule, %{"role" => role, "res" => res, "permission" => permission, "action" => action, "allowed" => allowed, "condition" => condition  })
     end
   end
 
-  def allowRule( %{"role" => role, "res" => res, "permission" => permission, "action" => action, "condition" => condition  })do
-    rule=Acl_context.get_rule_by( %{"role" => role, "res" => res, "permission" => permission, "action" => action });
-    if rule!= nil
+  def allowRule(
+        %{"role" => role, "res" => res, "permission" => permission, "action" => action, "condition" => condition}
+      )do
+    rule = Acl_context.get_rule_by(%{"role" => role, "res" => res, "permission" => permission, "action" => action});
+    if rule! = nil
       do
-      Acl_context.update_rule(rule,%{"allowed" => true, "condition" => condition  })
+      Acl_context.update_rule(rule, %{"allowed" => true, "condition" => condition})
       true
-      else
+    else
       false
     end
   end
-  def allowRule( %Rule{}= rule)do
+  def allowRule(%Rule{} = rule)do
 
-      Acl_context.update_rule(rule,%{"allowed" => true })
+    Acl_context.update_rule(rule, %{"allowed" => true})
   end
 
-  def denyRule( %{"role" => role, "res" => res, "permission" => permission, "action" => action, "condition" => condition  })do
-    rule=Acl_context.get_rule_by( %{"role" => role, "res" => res, "permission" => permission, "action" => action });
-    if rule!= nil
+  def denyRule(
+        %{"role" => role, "res" => res, "permission" => permission, "action" => action, "condition" => condition}
+      )do
+    rule = Acl_context.get_rule_by(%{"role" => role, "res" => res, "permission" => permission, "action" => action});
+    if rule! = nil
       do
-      Acl_context.update_rule(rule,%{ "allowed" => false, "condition" => condition  })
+      Acl_context.update_rule(rule, %{"allowed" => false, "condition" => condition})
       true
-      else
+    else
       false
     end
   end
 
-  def denyRule( %Rule{}= rule)do
-    Acl_context.update_rule(rule,%{"allowed" => false })
+  def denyRule(%Rule{} = rule)do
+    Acl_context.update_rule(rule, %{"allowed" => false})
   end
 
 

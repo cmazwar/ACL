@@ -11,13 +11,9 @@ defmodule AclWeb.RoleController do
     render(conn, "index.json", acl_roles: acl_roles)
   end
 
-  def create(conn, %{"role" => role_params}) do
-    with {:ok, %Role{} = role} <- Acl_context.create_role(role_params) do
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", Routes.role_path(conn, :show, role))
-      |> render("show.json", role: role)
-    end
+  def create( role_params) do
+    Acl_context.create_role(role_params)
+
   end
 
   def show(conn, %{"id" => id}) do
